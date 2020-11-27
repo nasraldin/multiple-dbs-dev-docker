@@ -1,0 +1,102 @@
+version: "3.4"
+
+services:
+  # mysql:
+  #   image: mysql:latest
+  #   environment:
+  #     - MYSQL_ROOT_PASSWORD=root
+  #     - MYSQL_USER=nasr
+  #     - MYSQL_PASSWORD=nasr
+  #     - MYSQL_DATABASE=test
+  #   volumes:
+  #     - mysql:/var/lib/mysql
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    volumes:
+      - mysql:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: phpmyadmin
+    environment:
+      # - PMA_HOST=mariadb
+      # - PMA_PORT=3306
+      # - MYSQL_ROOT_PASSWORD=root
+      - PMA_ARBITRARY=1
+    restart: always
+    ports:
+      - 8002:80
+    volumes:
+      - /sessions
+  # postgres:
+  #   image: postgres:latest
+  #   container_name: postgres
+  #   environment:
+  #     - POSTGRES_PASSWORD=$POSTGRES_PASSWORD
+  #   restart: always
+  #   ports:
+  #     - 5432:5432
+  # db-admin:
+  #   image: dpage/pgadmin4
+  #   environment:
+  #     PGADMIN_DEFAULT_EMAIL: ${PGADMIN_DEFAULT_EMAIL}
+  #     PGADMIN_DEFAULT_PASSWORD: ${PGADMIN_DEFAULT_PASSWORD}
+  #   depends_on:
+  #     - postgres
+  #   ports:
+  #     - "8004:80"
+  # adminer:
+  #   image: adminer
+  #   restart: always
+  #   ports:
+  #     - 8003:8080
+  #   environment:
+  #     - ADMINER_DESIGN=arcs-material
+  #     - ADMINER_PLUGINS=tables-filter tinymce
+  couchdb:
+    image: couchdb:latest
+    container_name: couchdb
+    restart: always
+    ports:
+      - "5984:5984"
+    environment:
+      COUCHDB_USER: ${COUCHDB_USER}
+      COUCHDB_PASSWORD: ${COUCHDB_PASSWORD}
+    volumes:
+      - couchdb:/opt/couchdb/data
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    ports:
+      - "6379:6379"
+    environment:
+      ALLOW_EMPTY_PASSWORD: ${ALLOW_EMPTY_PASSWORD}
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - "redis_data:/var/lib/redis/data"
+  redis-commander:
+    container_name: redis-commander
+    hostname: redis-commander
+    image: rediscommander/redis-commander:latest
+    restart: always
+    environment:
+      - REDIS_HOSTS=local:redis:6379
+    ports:
+      - "8003:8081"
+
+volumes:
+  assets: {}
+  mysql:
+    driver: local
+  couchdb:
+    driver: local
+  redis_data:
+    driver: local
