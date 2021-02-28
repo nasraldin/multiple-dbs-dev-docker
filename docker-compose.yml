@@ -1,6 +1,19 @@
 version: "3.4"
 
 services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:latest
+    container_name: sqlserver
+    restart: always
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=$SQL_SERVER_PASSWORD
+      # - MSSQL_TCP_PORT=$MSSQL_TCP_PORT
+      - MSSQL_PID=$MSSQL_PID
+    ports:
+      - "1433:1433"
+    volumes:
+      - mssql:/home/mssql
   # mysql:
   #   image: mysql:latest
   #   environment:
@@ -94,6 +107,8 @@ services:
 
 volumes:
   assets: {}
+  mssql:
+    driver: local
   mysql:
     driver: local
   couchdb:
